@@ -40,27 +40,6 @@ export const updateAlertReadStatus = async (id) => {
     }
 };
 
-// Snooze an alert (postpone its timestamp)
-export const snoozeAlert = async (id) => {
-    try {
-        const response = await axios.patch(`${API_BASE_URL}/${id}/snooze`);
-        return response.data;
-    } catch (error) {
-        console.error('Error snoozing alert:', error.response?.data || error.message);
-        throw error;
-    }
-};
-
-// Escalate an alert to 'Critical'
-export const escalateAlert = async (id) => {
-    try {
-        const response = await axios.patch(`${API_BASE_URL}/${id}/escalate`);
-        return response.data;
-    } catch (error) {
-        console.error('Error escalating alert:', error.response?.data || error.message);
-        throw error;
-    }
-};
 
 // Delete (dismiss) an alert
 export const deleteAlert = async (id) => {
