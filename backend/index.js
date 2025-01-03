@@ -30,6 +30,14 @@ io.on('connection', (socket) => {
         io.emit('updateAlerts', alert);
     });
 
+    socket.on('snoozeAlert', (alert) => {
+        io.emit('updateAlerts', alert);
+    });
+
+    socket.on('escalateAlert', (alert) => {
+        io.emit('updateAlerts', alert);
+    });
+
     socket.on('disconnect', () => {
         console.log('User disconnected');
     });

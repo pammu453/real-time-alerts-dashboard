@@ -2,19 +2,21 @@ import express from 'express';
 const router = express.Router();
 import { client } from '../config/db.js'; // PostgreSQL client
 
-// Fetch alerts
+// Fetch alerts with pagination
 router.get('/', async (req, res) => {
-    const { severity, isRead } = req.query;
+    const { severity, isRead, page = 1, pageSize = 10 } = req.query;
+
     let query = 'SELECT * FROM alerts';
     const conditions = [];
     const values = [];
+    let valueIndex = 1;
 
     if (severity) {
-        conditions.push('severity = $1');
+        conditions.push(`severity = $${valueIndex++}`);
         values.push(severity);
     }
     if (isRead !== undefined) {
-        conditions.push('is_read = $2');
+        conditions.push(`is_read = $${valueIndex++}`);
         values.push(isRead === 'true');
     }
 
@@ -22,6 +24,10 @@ router.get('/', async (req, res) => {
         query += ` WHERE ${conditions.join(' AND ')}`;
     }
     query += ' ORDER BY timestamp DESC';
+
+    const offset = (page - 1) * pageSize;
+    query += ` LIMIT $${valueIndex++} OFFSET $${valueIndex}`;
+    values.push(parseInt(pageSize), offset);
 
     try {
         const result = await client.query(query, values);
@@ -69,6 +75,7 @@ router.patch('/:id/read', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
+
 
 // Dismiss alert
 router.delete('/:id', async (req, res) => {
